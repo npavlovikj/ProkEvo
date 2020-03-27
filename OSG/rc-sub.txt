@@ -1,0 +1,2 @@
+# Replace BacGenPop with the absolute path to the current directory
+sra_ids.txt file:///BacGenPop/sra_ids.txt site="local"
