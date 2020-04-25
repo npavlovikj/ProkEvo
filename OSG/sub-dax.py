@@ -65,6 +65,7 @@ for output_filtering_contigs in list_of_contig_files:
     prokka_run[i].uses(str(srr_id) + "_prokka_output/" + str(srr_id) + ".gff", link=Link.OUTPUT, transfer=True)
     prokka_run[i].addProfile(Profile("pegasus", "runtime", "14400"))
     prokka_run[i].addProfile(Profile("globus", "maxwalltime", "240"))
+    prokka_run[i].addProfile(Profile("condor", "request_memory", "2000"))
     dax.addJob(prokka_run[i])
     # add files
     f = File(str(srr_id) + "_prokka_output/" + str(srr_id) + ".gff")
@@ -177,7 +178,6 @@ roary_run.uses("roary_output/core_gene_alignment.aln", link=Link.OUTPUT, transfe
 roary_run.addProfile(Profile("pegasus", "runtime", "604800"))
 roary_run.addProfile(Profile("globus", "maxwalltime", "10080"))
 roary_run.addProfile(Profile("condor", "request_memory", "970000"))
-roary_run.addProfile(Profile("condor", "memory", "970000"))
 # roary_run.addProfile(Profile("pegasus", "label", str(srr_id)))
 dax.addJob(roary_run)
 

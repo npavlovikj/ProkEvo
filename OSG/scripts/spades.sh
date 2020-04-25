@@ -58,7 +58,16 @@ touch $output/contigs.fasta
 check_files
 cp $output/contigs.fasta ${3}_contigs.fasta
 rm -rf $output
-fi 
+elif (grep "err code: -9" spades-output.txt) >/dev/null 2>&1
+then
+echo "WARNING: spades exited with -9. Changing exit code to 0." 
+ec=0
+# create 0-byte file
+# rm $output/contigs.fasta
+touch $output/contigs.fasta
+check_files
+cp $output/contigs.fasta ${3}_contigs.fasta
+rm -rf $output
 else
 echo "Exit code is 0"
 touch $output/contigs.fasta

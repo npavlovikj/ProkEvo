@@ -42,10 +42,11 @@ for output_filtering_contigs in list_of_contig_files:
     prokka_run.append(Job("ex_prokka_run"))
     prokka_run[i].addArguments("--kingdom", "Bacteria", "--locustag", srr_id, "--outdir", str(srr_id) + "_prokka_output", "--prefix", srr_id, "--force", output_filtering_contigs)
     prokka_run[i].uses(output_filtering_contigs, link=Link.INPUT)
-    prokka_run[i].uses(str(srr_id) + "_prokka_output/" + str(srr_id) + ".gff", link=Link.OUTPUT, transfer=False)
+    prokka_run[i].uses(str(srr_id) + "_prokka_output/" + str(srr_id) + ".gff", link=Link.OUTPUT)
     # prokka_run[i].addProfile(Profile("pegasus", "label", str(srr_id)))
     prokka_run[i].addProfile(Profile("pegasus", "runtime", "14400"))
     prokka_run[i].addProfile(Profile("globus", "maxwalltime", "240"))
+    prokka_run[i].addProfile(Profile("condor", "request_memory", "2000"))
     dax.addJob(prokka_run[i])
     # add files
     f = File(str(srr_id) + "_prokka_output/" + str(srr_id) + ".gff")
@@ -72,7 +73,7 @@ for output_filtering_contigs in list_of_contig_files:
 
 # add job for mlst
 mlst_run = Job("ex_mlst_run")
-mlst_run.addArguments("--legacy", "--scheme", "suberis", "--csv", *list_of_contig_files)
+mlst_run.addArguments("--legacy", "--scheme", "senterica", "--csv", *list_of_contig_files)
 for l in list_of_contig_files:
     mlst_run.uses(l, link=Link.INPUT)
 o = File("mlst_output.csv")
@@ -159,7 +160,6 @@ roary_run.uses("roary_output.tar.gz", link=Link.OUTPUT, transfer=True)
 roary_run.addProfile(Profile("pegasus", "runtime", "604800"))
 roary_run.addProfile(Profile("globus", "maxwalltime", "10080"))
 roary_run.addProfile(Profile("condor", "request_memory", "970000"))
-roary_run.addProfile(Profile("condor", "memory", "970000"))
 # roary_run.addProfile(Profile("pegasus", "label", str(srr_id)))
 dax.addJob(roary_run)
 
@@ -172,7 +172,6 @@ fastbaps_run.uses("roary_output/core_gene_alignment.aln", link=Link.INPUT)
 fastbaps_run.uses(fastbaps_output, link=Link.OUTPUT, transfer=True)
 fastbaps_run.addProfile(Profile("condor", "request_memory", "30000"))
 fastbaps_run.addProfile(Profile("globus", "maxmemory", "30000"))
-fastbaps_run.addProfile(Profile("pegasus", "memory", "30000"))
 # fastbaps_run.addProfile(Profile("pegasus", "label", str(srr_id)))
 dax.addJob(fastbaps_run)
 

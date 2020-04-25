@@ -30,7 +30,7 @@ cat > sites.xml <<EOF
         <profile namespace="condor" key="grid_resource">batch slurm</profile>
         <profile namespace="pegasus" key="queue">batch</profile>
         <profile namespace="env" key="PEGASUS_HOME">/usr</profile>
-        <profile namespace="condor" key="request_memory"> ifthenelse(isundefined(DAGNodeRetry) || DAGNodeRetry == 0, 2000, 60000) </profile>
+        <profile namespace="condor" key="request_memory"> ifthenelse(isundefined(DAGNodeRetry) || DAGNodeRetry == 0, 2000, 120000) </profile>
     </site>
 
 </sitecatalog>
