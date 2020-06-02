@@ -67,15 +67,15 @@ for i in range(0,length):
     dax.addFile(reverse_file[i])
 
     # add job for downloading data
-    sra_run.append(Job("ex_sra_run"))
-    sra_run[i].addArguments(str(srr_id))
-    sra_run[i].uses(forward_file[i], link=Link.OUTPUT, transfer=False)
-    sra_run[i].uses(reverse_file[i], link=Link.OUTPUT, transfer=False)
+    #sra_run.append(Job("ex_sra_run"))
+    #sra_run[i].addArguments(str(srr_id))
+    #sra_run[i].uses(forward_file[i], link=Link.OUTPUT, transfer=False)
+    #sra_run[i].uses(reverse_file[i], link=Link.OUTPUT, transfer=False)
     # add profile for download limit
     # Profile(PROPERTY_KEY[0], PROFILE KEY, PROPERTY_KEY[1])
-    sra_run[i].addProfile(Profile("dagman", "CATEGORY", "sradownload"))
+    #sra_run[i].addProfile(Profile("dagman", "CATEGORY", "sradownload"))
     # sra_run[i].addProfile(Profile("pegasus", "label", str(srr_id)))
-    dax.addJob(sra_run[i])
+    #dax.addJob(sra_run[i])
 
     # add job for Trimmomatic
     trim_run.append(Job("ex_trim_run"))
@@ -83,9 +83,9 @@ for i in range(0,length):
     trim_run[i].uses(forward_file[i], link=Link.INPUT)
     trim_run[i].uses(reverse_file[i], link=Link.INPUT)
     trim_run[i].uses(str(srr_id) + "_pair_1_trimmed.fastq", link=Link.OUTPUT, transfer=False)
-    trim_run[i].uses(str(srr_id) + "_unpair_1_trimmed.fastq", link=Link.OUTPUT, transfer=False)
+    #trim_run[i].uses(str(srr_id) + "_unpair_1_trimmed.fastq", link=Link.OUTPUT, transfer=False)
     trim_run[i].uses(str(srr_id) + "_pair_2_trimmed.fastq", link=Link.OUTPUT, transfer=False)
-    trim_run[i].uses(str(srr_id) + "_unpair_2_trimmed.fastq", link=Link.OUTPUT, transfer=False)
+    #trim_run[i].uses(str(srr_id) + "_unpair_2_trimmed.fastq", link=Link.OUTPUT, transfer=False)
     # trim_run[i].addProfile(Profile("pegasus", "label", str(srr_id)))
     dax.addJob(trim_run[i])
 
@@ -168,7 +168,7 @@ input_file = open("sra_ids.txt")
 length = len(input_file.readlines())
 for i in range(0,length):
     # Add control-flow dependencies
-    dax.addDependency(Dependency(parent=sra_run[i], child=trim_run[i]))
+    # dax.addDependency(Dependency(parent=sra_run[i], child=trim_run[i]))
     dax.addDependency(Dependency(parent=trim_run[i], child=fastqc_run[i]))
     dax.addDependency(Dependency(parent=fastqc_run[i], child=cat))
     dax.addDependency(Dependency(parent=trim_run[i], child=spades_run[i]))

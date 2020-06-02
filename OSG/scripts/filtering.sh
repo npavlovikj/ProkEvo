@@ -15,7 +15,8 @@ if [ $a == 0 ] || [ $a -ge 300 ] || [ $b -le 25000 ]
 then
 # empty file
 touch $NEW_NAME
-echo "EMPTY" > $NEW_NAME
+echo ">EMPTY" >> $NEW_NAME
+echo "NNNNN" >> $NEW_NAME
 else
 cp $SPADES_FILE $NEW_NAME
 fi

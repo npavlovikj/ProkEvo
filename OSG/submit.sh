@@ -57,7 +57,7 @@ cat > sites.xml <<EOF
     <site handle="condor_pool" arch="x86_64" os="LINUX">
         <profile namespace="condor" key="requirements" >HAS_SINGULARITY == True &amp;&amp; GLIDEIN_Site =!= "OSG_US_ASU_DELL_M420" &amp;&amp; GLIDEIN_Site =!= "SU-ITS" &amp;&amp; GLIDEIN_Site =!= "Colorado" &amp;&amp; TARGET.GLIDEIN_ResourceName =!= MY.MachineAttrGLIDEIN_ResourceName1 &amp;&amp; TARGET.GLIDEIN_ResourceName =!= MY.MachineAttrGLIDEIN_ResourceName2 &amp;&amp; TARGET.GLIDEIN_ResourceName =!= MY.MachineAttrGLIDEIN_ResourceName3 &amp;&amp; TARGET.GLIDEIN_ResourceName =!= MY.MachineAttrGLIDEIN_ResourceName4</profile>
         <profile namespace="condor" key="+ProjectName" >"BioAlgorithms"</profile>
-        <profile namespace="condor" key="+SingularityImage" >"/cvmfs/singularity.opensciencegrid.org/npavlovikj/bacteria_db:latest"</profile>
+        <profile namespace="condor" key="+SingularityImage" >"/cvmfs/singularity.opensciencegrid.org/npavlovikj/bacpopgen:latest"</profile>
 
         <!-- tell pegasus that condor_pool is accessible on submit host -->
         <profile namespace="pegasus" key="auxillary.local">true</profile>
@@ -65,10 +65,10 @@ cat > sites.xml <<EOF
         <profile namespace="pegasus" key="style">condor</profile>
         <profile namespace="condor" key="universe">vanilla</profile>
         <profile namespace="condor" key="request_cpus">1</profile>
-        <profile namespace="condor" key="request_memory"> ifthenelse(isundefined(DAGNodeRetry) || DAGNodeRetry &lt;= 1, 2000, 60000) </profile>
+        <profile namespace="condor" key="request_memory"> ifthenelse(isundefined(DAGNodeRetry) || DAGNodeRetry &lt;= 1, 2000, 100000) </profile>
         <profile namespace="condor" key="+WantsStashCache">True</profile>
         <profile namespace="env" key="PERL5LIB">/opt/anaconda/perl5</profile>
-        <profile namespace="condor" key="request_disk">9 GB</profile>
+        <profile namespace="condor" key="request_disk">15 GB</profile>
     </site>
 
 </sitecatalog>

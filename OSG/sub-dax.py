@@ -60,12 +60,12 @@ for output_filtering_contigs in list_of_contig_files:
 		
     # add job for Prokka
     prokka_run.append(Job("ex_prokka_run"))
-    prokka_run[i].addArguments("--kingdom", "Bacteria", "--locustag", srr_id, "--outdir", str(srr_id) + "_prokka_output", "--prefix", srr_id, "--force", output_filtering_contigs)
+    prokka_run[i].addArguments(srr_id, output_filtering_contigs)
     prokka_run[i].uses(output_filtering_contigs, link=Link.INPUT)
     prokka_run[i].uses(str(srr_id) + "_prokka_output/" + str(srr_id) + ".gff", link=Link.OUTPUT, transfer=True)
+    prokka_run[i].uses(str(srr_id) + "_prokka_output.tar.gz", link=Link.OUTPUT, transfer=True)
     prokka_run[i].addProfile(Profile("pegasus", "runtime", "14400"))
     prokka_run[i].addProfile(Profile("globus", "maxwalltime", "240"))
-    prokka_run[i].addProfile(Profile("condor", "request_memory", "2000"))
     dax.addJob(prokka_run[i])
     # add files
     f = File(str(srr_id) + "_prokka_output/" + str(srr_id) + ".gff")
@@ -81,7 +81,7 @@ for output_filtering_contigs in list_of_contig_files:
 
     # add job for sistr
     sistr_run.append(Job("ex_sistr_run"))
-    sistr_run[i].addArguments("--qc", "-vv", "--alleles-output", str(srr_id) + "_allele_results.json", "--novel-alleles", str(srr_id) + "_novel_alleles.fasta", "--cgmlst-profiles", str(srr_id) + "_cgmlst_profiles.csv", "-f", "csv", "-o", str(srr_id) + "_sistr_output.csv", output_filtering_contigs)
+    sistr_run[i].addArguments(str(srr_id), output_filtering_contigs)
     sistr_run[i].uses(output_filtering_contigs, link=Link.INPUT)
     sistr_run[i].uses(str(srr_id) + "_sistr_output.csv", link=Link.OUTPUT, transfer=False)
     dax.addJob(sistr_run[i])
@@ -175,9 +175,11 @@ roary_run.addArguments("-s", "-e", "--mafft", "-p", "4", "-cd", "99.0", "-i", "9
 for l in list_of_gff_files:
     roary_run.uses(l, link=Link.INPUT)
 roary_run.uses("roary_output/core_gene_alignment.aln", link=Link.OUTPUT, transfer=True)
+roary_run.uses("roary_output.tar.gz", link=Link.OUTPUT, transfer=True)
 roary_run.addProfile(Profile("pegasus", "runtime", "604800"))
 roary_run.addProfile(Profile("globus", "maxwalltime", "10080"))
 roary_run.addProfile(Profile("condor", "request_memory", "970000"))
+roary_run.addProfile(Profile("condor", "memory", "970000"))
 # roary_run.addProfile(Profile("pegasus", "label", str(srr_id)))
 dax.addJob(roary_run)
 
