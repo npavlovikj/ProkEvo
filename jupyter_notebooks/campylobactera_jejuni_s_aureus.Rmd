@@ -1,0 +1,219 @@
+---
+title: "Campylobacter jejuni"
+author: "Joao Carlos Gomes-Neto"
+date: "7/16/2020"
+output: html_document
+---
+
+```{r, include = FALSE}
+# Load packages
+
+library(tidyverse)
+library(skimr)
+library(RColorBrewer)
+library(gridExtra)
+library(lattice)
+library(ggpubr)
+library(vegan)
+library(reshape2)
+library(ggrepel)
+library(ggnewscale)
+library(forcats)
+library(naniar)
+library(data.table)
+library(rARPACK)
+library(logisticPCA)
+library(cluster)    
+library(factoextra) 
+library(dendextend)
+```
+
+MLST and abx data plot C. Jejuni
+
+```{r, include = FALSE}
+
+mlst2 <- read_csv('~/Documents/natasha_papers/prokevo/mlst_output.csv')
+
+mlst2$id <- sapply(strsplit(as.character(mlst2$FILE),'_'), "[", 1)
+
+# Select columns of interest
+
+s1 <- mlst2 %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+data1 <- s1 %>% select(ST) %>%
+          drop_na(ST) %>%
+          group_by(ST) %>%
+          summarize(n = n()) %>%
+          arrange(desc(n)) %>%
+          mutate(prop = n/sum(n)*100) %>%
+          arrange(desc(prop))
+
+data2 <- data1 %>% filter(prop > 1)
+
+p1 <- ggplot(data = data2, mapping = aes(x = reorder(ST, prop), prop)) + 
+      geom_bar(stat = "identity", fill="steelblue") + 
+      coord_flip() +
+      ylim(0, 10) +
+      theme_bw() + 
+      theme(legend.position = "none") +
+      ylab("Proportion") +
+      xlab("ST") +
+      theme(axis.text.y = element_text(size = 30)) +
+      theme(axis.title.y = element_text(size = 40, face = "bold")) +
+      theme(axis.title.x = element_text(size = 35, face = "bold")) +
+      theme(axis.text.x = element_text(angle = 0, hjust = 1, size = 25)) +
+      ggtitle(expression(bold(paste("A.     ", bolditalic(C), ". jejuni")))) +
+      theme(plot.title = element_text(size = 60, face = "bold")) +
+      annotate(geom = "text", label = "Filter = proportion > 1%", x = 7.5, y = 7, 
+                                  color = "black", size = 15)
+p1
+
+# List of selected STs
+
+list_of_st <- data2$ST
+
+####################################################################
+
+# Read in abx data
+
+abx <- read_csv('~/Documents/natasha_papers/prokevo/c_jejuni_abx_genes.csv')
+
+# Merge data 
+
+data3 <- left_join(s1, abx, on = "id")
+
+# Drop NA
+data4 <- data3 %>% drop_na(ST, gene)
+
+# Select ST and gene only
+
+data5 <- data4 %>% select(ST, gene) %>%
+         group_by(ST,gene) %>%
+         summarize(count = n()) 
+
+# filter most dominant sts
+
+data6 <- data5 %>% filter(ST %in% list_of_st)
+
+data7 <- data6 %>% group_by(ST) %>% mutate(prop = count/sum(count)*100)
+data7$ST <- factor(data7$ST, levels=c("353", "45", "982", "48", "50", "8", "806",
+                                      "459", "21", "22", "222", "922", "61", "464",
+                                      "52", "1244", "51", "939", "2132", "929", "354", "3510",
+                                      "137"))
+
+data8 <- data7 %>% filter(prop > 1)
+p2 <- ggplot(data = data8, mapping = aes(x = prop, y=gene)) + 
+      geom_bar(stat = "identity", fill = "darkblue") + 
+      theme_bw() + 
+      xlab("Proportion") +
+      ylab("Antibiotic resistance genes") +
+      xlim(0, 100) +
+      theme(axis.text.y = element_text(size = 20)) +
+      theme(axis.title.y = element_text(size = 35, face = "bold")) +
+      theme(axis.title.x = element_text(size = 30, face = "bold")) +
+      theme(axis.text.x = element_text(angle = 0, hjust = 1, size = 20)) +
+      ggtitle(expression(bold(paste("C.     ", bolditalic(C), ". jejuni")))) +
+      theme(plot.title = element_text(size = 60, face = "bold")) +
+      theme(strip.text.x = element_text(size = 20, colour = "black", angle = 0)) +
+      facet_wrap(~ ST)
+p2
+
+```
+
+MLST and abx data plot S. aureus 
+
+```{r, include = FALSE}
+
+data1 <- read_csv('~/Documents/natasha_papers/prokevo/saureusmlst.csv')
+
+# Generate the id column 
+data1$id2 <- sapply(strsplit(as.character(data1$FILE),'/'), "[", 8)
+data1 <- data1 %>% separate(id2, c("id", "day"), sep = "\\.")
+
+
+# Select columns of interest
+
+s1 <- data1 %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+data2 <- s1 %>% select(ST) %>%
+          drop_na(ST) %>%
+          group_by(ST) %>%
+          summarize(n = n()) %>%
+          arrange(desc(n)) %>%
+          mutate(prop = n/sum(n)*100) %>%
+          arrange(desc(prop))
+
+data3 <- data2 %>% filter(prop > 1)
+
+p1 <- ggplot(data = data3, mapping = aes(x = reorder(ST, prop), prop)) + 
+      geom_bar(stat = "identity", fill="steelblue") + 
+      coord_flip() +
+      ylim(0, 50) +
+      theme_bw() + 
+      theme(legend.position = "none") +
+      ylab("Proportion") +
+      xlab("ST") +
+      theme(axis.text.y = element_text(size = 30)) +
+      theme(axis.title.y = element_text(size = 40, face = "bold")) +
+      theme(axis.title.x = element_text(size = 35, face = "bold")) +
+      theme(axis.text.x = element_text(angle = 0, hjust = 1, size = 25)) +
+      ggtitle(expression(bold(paste("B.     ", bolditalic(S), ". aureus")))) +
+      theme(plot.title = element_text(size = 60, face = "bold")) +
+      annotate(geom = "text", label = "Filter = proportion > 1%", x = 2.5, y = 30, 
+                                  color = "black", size = 15)
+p1
+
+# List of selected STs
+
+list_of_st <- data3$ST
+
+####################################################################
+
+# Read in abx data
+
+abx <- read_csv('~/Documents/natasha_papers/prokevo/saureus_resfinder_output_final.csv')
+
+# Merge data 
+
+data3 <- left_join(s1, abx, on = "id")
+
+# Drop NA
+data4 <- data3 %>% drop_na(ST, gene)
+
+# Select ST and gene only
+
+data5 <- data4 %>% select(ST, gene) %>%
+         group_by(ST,gene) %>%
+         summarize(count = n()) 
+
+# filter most dominant sts
+
+data6 <- data5 %>% filter(ST %in% list_of_st)
+
+data7 <- data6 %>% group_by(ST) %>% mutate(prop = count/sum(count)*100)
+
+
+data8 <- data7 %>% filter(prop > 1)
+p2 <- ggplot(data = data8, mapping = aes(x = prop, y=gene)) + 
+      geom_bar(stat = "identity", fill = "darkblue") + 
+      theme_bw() + 
+      xlab("Proportion") +
+      ylab("Antibiotic resistance genes") +
+      xlim(0, 100) +
+      theme(axis.text.y = element_text(size = 20)) +
+      theme(axis.title.y = element_text(size = 35, face = "bold")) +
+      theme(axis.title.x = element_text(size = 30, face = "bold")) +
+      theme(axis.text.x = element_text(angle = 0, hjust = 1, size = 20)) +
+      ggtitle(expression(bold(paste("D.     ", bolditalic(S), ". aureus")))) +
+      theme(plot.title = element_text(size = 60, face = "bold")) +
+      theme(strip.text.x = element_text(size = 20, colour = "black", angle = 0)) +
+      facet_wrap(~ ST)
+p2
+
+```
