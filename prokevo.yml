@@ -1,4 +1,4 @@
-name: bacpopgen
+name: prokevo
 channels:
   - hcc
   - conda-forge
@@ -605,5 +605,5 @@ dependencies:
   - pip:
     - pyqt5-sip==4.19.18
     - pyqtwebengine==5.12.1
-prefix: /anaconda/envs/bacpopgen
+prefix: /anaconda/envs/prokevo
 
