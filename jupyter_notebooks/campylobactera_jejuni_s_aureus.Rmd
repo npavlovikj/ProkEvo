@@ -79,48 +79,179 @@ list_of_st <- data2$ST
 
 # Read in abx data
 
-abx <- read_csv('~/Documents/natasha_papers/prokevo/c_jejuni_abx_genes.csv')
+abx1 <- read_csv('~/Documents/natasha_papers/prokevo/original_resfinder_files/campylobacter_jejuni/sabricate_resfinder_output_jejuni.csv')
+abx1$id2 <- sapply(strsplit(as.character(abx1$'#FILE'),'/'), "[", 8)
+abx2 <- abx1 %>% separate(id2, c("id", "day"), sep = "\\_")
+abx2 <- abx2 %>% mutate(gene = GENE)
+abx3 <- abx2 %>% select(id, gene)
 
 # Merge data 
 
-data3 <- left_join(s1, abx, on = "id")
+data3 <- left_join(s1, abx3, on = "id")
+d1 <- data3
+d1 <- d1 %>% drop_na()
+###############################################
+# Calculations for ST8
 
-# Drop NA
-data4 <- data3 %>% drop_na(ST, gene)
+d2a <- d1 %>% filter(ST == "8")
 
-# Select ST and gene only
+d3a <- d2a %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
 
-data5 <- data4 %>% select(ST, gene) %>%
-         group_by(ST,gene) %>%
-         summarize(count = n()) 
+d4a <- d3a %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 886) %>%
+         mutate(prop = (value/total)*100)
 
-# filter most dominant sts
+d5a <- d4a %>% mutate(ST = "8")
 
-data6 <- data5 %>% filter(ST %in% list_of_st)
+###############################################
+# Calculations for ST45
 
-data7 <- data6 %>% group_by(ST) %>% mutate(prop = count/sum(count)*100)
-data7$ST <- factor(data7$ST, levels=c("353", "45", "982", "48", "50", "8", "806",
-                                      "459", "21", "22", "222", "922", "61", "464",
-                                      "52", "1244", "51", "939", "2132", "929", "354", "3510",
-                                      "137"))
+d2b <- d1 %>% filter(ST == "45")
 
-data8 <- data7 %>% filter(prop > 1)
-p2 <- ggplot(data = data8, mapping = aes(x = prop, y=gene)) + 
-      geom_bar(stat = "identity", fill = "darkblue") + 
+d3b <- d2b %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
+
+d4b <- d3b %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 1041) %>%
+         mutate(prop = (value/total)*100)
+
+d5b <- d4b %>% mutate(ST = "45")
+
+###############################################
+# Calculations for ST48
+
+d2c <- d1 %>% filter(ST == "48")
+
+d3c <- d2c %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
+
+d4c <- d3c %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 940) %>%
+         mutate(prop = (value/total)*100)
+
+d5c <- d4c %>% mutate(ST = "48")
+
+###############################################
+# Calculations for ST50
+
+d2d <- d1 %>% filter(ST == "50")
+
+d3d <- d2d %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
+
+d4d <- d3d %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 932) %>%
+         mutate(prop = (value/total)*100)
+
+d5d <- d4d %>% mutate(ST = "50")
+
+#################################################
+
+# Calculations for ST353
+
+d2e <- d1 %>% filter(ST == "353")
+
+d3e <- d2e %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
+
+d4e <- d3e %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 1108) %>%
+         mutate(prop = (value/total)*100)
+
+d5e <- d4e %>% mutate(ST = "353")
+
+#################################################
+
+# Calculations for ST459
+
+d2f <- d1 %>% filter(ST == "459")
+
+d3f <- d2f %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
+
+d4f <- d3f %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 577) %>%
+         mutate(prop = (value/total)*100)
+
+d5f <- d4f %>% mutate(ST = "459")
+
+#################################################
+
+# Calculations for ST806
+
+d2g <- d1 %>% filter(ST == "806")
+
+d3g <- d2g %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
+
+d4g <- d3g %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 651) %>%
+         mutate(prop = (value/total)*100)
+
+d5g <- d4g %>% mutate(ST = "806")
+
+#################################################
+
+# Calculations for ST982
+
+d2h <- d1 %>% filter(ST == "982")
+
+d3h <- d2h %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
+
+d4h <- d3h %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 940) %>%
+         mutate(prop = (value/total)*100)
+
+d5h <- d4h %>% mutate(ST = "982")
+
+# combined datasets
+
+d6 <- rbind(d5a, d5b, d5c, d5d, d5e, d5f, d5g, d5h)
+
+d7 <- d6 %>% filter(prop >= 25)
+p2 <- ggplot(data = d7, mapping = aes(x = prop, y=gene, fill = gene)) + 
+      geom_bar(stat = "identity") + 
       theme_bw() + 
       xlab("Proportion") +
       ylab("Antibiotic resistance genes") +
       xlim(0, 100) +
-      theme(axis.text.y = element_text(size = 20)) +
+       theme(legend.position = "none") +
+        scale_fill_brewer(palette = "Set1") +
+      theme(axis.text.y = element_text(size = 25)) +
       theme(axis.title.y = element_text(size = 35, face = "bold")) +
       theme(axis.title.x = element_text(size = 30, face = "bold")) +
       theme(axis.text.x = element_text(angle = 0, hjust = 1, size = 20)) +
       ggtitle(expression(bold(paste("C.     ", bolditalic(C), ". jejuni")))) +
       theme(plot.title = element_text(size = 60, face = "bold")) +
-      theme(strip.text.x = element_text(size = 20, colour = "black", angle = 0)) +
+      theme(strip.text.x = element_text(size = 30, colour = "black", angle = 0)) +
       facet_wrap(~ ST)
 p2
-
 ```
 
 MLST and abx data plot S. aureus 
@@ -177,43 +308,145 @@ list_of_st <- data3$ST
 
 # Read in abx data
 
-abx <- read_csv('~/Documents/natasha_papers/prokevo/saureus_resfinder_output_final.csv')
+abx1 <- read_csv('~/Documents/natasha_papers/prokevo/original_resfinder_files/staphylococcus_aureus/sabricate_resfinder_output_aureus.csv')
+abx1$id2 <- sapply(strsplit(as.character(abx1$'#FILE'),'/'), "[", 8)
+abx2 <- abx1 %>% separate(id2, c("id", "day"), sep = "\\.")
+abx2 <- abx2 %>% mutate(gene = GENE)
+abx3 <- abx2 %>% select(id, gene)
 
 # Merge data 
 
-data3 <- left_join(s1, abx, on = "id")
+data3 <- left_join(s1, abx3, on = "id")
+d1 <- data3
+d1 <- d1 %>% drop_na()
+###############################################
+# Calculations for ST8
 
-# Drop NA
-data4 <- data3 %>% drop_na(ST, gene)
+d2a <- d1 %>% filter(ST == "8")
 
-# Select ST and gene only
+d3a <- d2a %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
 
-data5 <- data4 %>% select(ST, gene) %>%
-         group_by(ST,gene) %>%
-         summarize(count = n()) 
+d4a <- d3a %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 4518) %>%
+         mutate(prop = (value/total)*100)
 
-# filter most dominant sts
+d5a <- d4a %>% mutate(ST = "8")
 
-data6 <- data5 %>% filter(ST %in% list_of_st)
+###############################################
+# Calculations for ST5
 
-data7 <- data6 %>% group_by(ST) %>% mutate(prop = count/sum(count)*100)
+d2b <- d1 %>% filter(ST == "5")
 
+d3b <- d2b %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
 
-data8 <- data7 %>% filter(prop > 1)
-p2 <- ggplot(data = data8, mapping = aes(x = prop, y=gene)) + 
-      geom_bar(stat = "identity", fill = "darkblue") + 
+d4b <- d3b %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 3801) %>%
+         mutate(prop = (value/total)*100)
+
+d5b <- d4b %>% mutate(ST = "5")
+
+###############################################
+# Calculations for ST105
+
+d2c <- d1 %>% filter(ST == "105")
+
+d3c <- d2c %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
+
+d4c <- d3c %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 1334) %>%
+         mutate(prop = (value/total)*100)
+
+d5c <- d4c %>% mutate(ST = "105")
+
+###############################################
+# Calculations for ST398
+
+d2d <- d1 %>% filter(ST == "398")
+
+d3d <- d2d %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
+
+d4d <- d3d %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 276) %>%
+         mutate(prop = (value/total)*100)
+
+d5d <- d4d %>% mutate(ST = "398")
+
+#################################################
+
+# Calculations for ST609
+
+d2e <- d1 %>% filter(ST == "609")
+
+d3e <- d2e %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
+
+d4e <- d3e %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 211) %>%
+         mutate(prop = (value/total)*100)
+
+d5e <- d4e %>% mutate(ST = "609")
+
+#################################################
+
+# Calculations for ST45
+
+d2f <- d1 %>% filter(ST == "45")
+
+d3f <- d2f %>% select(id, gene) %>%
+    group_by(id, gene) %>%
+    summarize(count = n()) %>%
+    filter(count <= 1) 
+
+d4f <- d3f %>% group_by(gene) %>% 
+         summarize(value = n()) %>%
+         mutate(total = 141) %>%
+         mutate(prop = (value/total)*100)
+
+d5f <- d4f %>% mutate(ST = "45")
+
+#################################################
+# combined datasets
+
+d6 <- rbind(d5a, d5b, d5c, d5d, d5e, d5f)
+
+d7 <- d6 %>% filter(prop >= 25)
+p2 <- ggplot(data = d7, mapping = aes(x = prop, y=gene, fill = gene)) + 
+      geom_bar(stat = "identity") + 
       theme_bw() + 
       xlab("Proportion") +
       ylab("Antibiotic resistance genes") +
       xlim(0, 100) +
-      theme(axis.text.y = element_text(size = 20)) +
+      theme(legend.position = "none") +
+        scale_fill_manual(values = c("red", "black", "darkgreen", "orange", "brown",
+                                   "purple", "gray", "steelblue", "salmon", "darkred",
+                                   "yellow", "pink", "chocolate", "bisque2", "azure3",
+                                   "cyan", "darkcyan", "coral4", "brown3", "cornflowerblue", "beige")) +
+      theme(axis.text.y = element_text(size = 15)) +
       theme(axis.title.y = element_text(size = 35, face = "bold")) +
       theme(axis.title.x = element_text(size = 30, face = "bold")) +
       theme(axis.text.x = element_text(angle = 0, hjust = 1, size = 20)) +
       ggtitle(expression(bold(paste("D.     ", bolditalic(S), ". aureus")))) +
       theme(plot.title = element_text(size = 60, face = "bold")) +
-      theme(strip.text.x = element_text(size = 20, colour = "black", angle = 0)) +
+      theme(strip.text.x = element_text(size = 30, colour = "black", angle = 0)) +
       facet_wrap(~ ST)
 p2
-
 ```
