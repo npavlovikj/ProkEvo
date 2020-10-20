@@ -21,6 +21,16 @@ echo ''${line}'_2.fastq file:///absolute_path_to_fastq_files/'${line}'_2.fastq s
 done < sra_ids.txt 
 COMM
 
+# Clean old directories and files
+rm -rf data_tmp
+rm -rf scratch 
+rm -rf outputs
+rm -rf $USER
+rm -rf root-pipeline.dax 
+rm -rf sites.xml 
+rm -rf rc.txt
+cp rc.txt.org rc.txt
+
 export RUN_DIR=$TOPDIR/data_tmp
 mkdir -p $RUN_DIR
 ./root-dax.py $RUN_DIR > root-pipeline.dax
