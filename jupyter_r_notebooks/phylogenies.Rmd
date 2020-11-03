@@ -152,7 +152,7 @@ fig7a <- gheatmap(t1, d2, offset=.0, width=10, colnames = FALSE) +
                                "ST8", "ST45", "ST48", "ST50", "ST353", "ST459", 
                                "ST806", "ST982", "Other STs"),
                     name= "BAPS1 (innermost) -> ST (outermost)") +
-  ggtitle(expression(bold(paste("A. Hierarchical population structure - ", bolditalic(C),". jejuni")))) +
+  ggtitle(expression(bold(paste("A. Hierarchical population structure - ", bolditalic(C),". ", bolditalic(jejuni))))) +
   theme(plot.title = element_text(size = 40, face = "bold"), 
         legend.title=element_text(size=24, face = "bold"), 
     legend.text=element_text(size=22))
@@ -189,7 +189,7 @@ skim(b1)
 
 # Enter MLST results
 
-mlst <- read_csv('saureusmlst.csv')
+mlst <- read_csv('saureus_st.csv')
 
 # QC the data
 
@@ -265,7 +265,7 @@ fig7b <- gheatmap(t1, d2, offset=.0, width=150, colnames = FALSE) +
                                "ST5", "ST8", "ST45", "ST105", "ST398", "ST609", 
                                "Other STs"),
                     name= "BAPS1 (innermost) -> ST (outermost)") +
-  ggtitle(expression(bold(paste("B. Hierarchical population structure - ", bolditalic(S),". aureus")))) +
+  ggtitle(expression(bold(paste("B. Hierarchical population structure - ", bolditalic(S),". ", bolditalic(aureus))))) +
   theme(plot.title = element_text(size = 40, face = "bold"), 
         legend.title=element_text(size=24, face = "bold"), 
     legend.text=element_text(size=22))

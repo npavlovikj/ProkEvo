@@ -57,7 +57,7 @@ cat > sites.xml <<EOF
     <site handle="condor_pool" arch="x86_64" os="LINUX">
         <profile namespace="condor" key="requirements" >HAS_SINGULARITY == True &amp;&amp; GLIDEIN_Site =!= "OSG_US_ASU_DELL_M420" &amp;&amp; GLIDEIN_Site =!= "SU-ITS" &amp;&amp; GLIDEIN_Site =!= "Colorado" &amp;&amp; TARGET.GLIDEIN_ResourceName =!= MY.MachineAttrGLIDEIN_ResourceName1 &amp;&amp; TARGET.GLIDEIN_ResourceName =!= MY.MachineAttrGLIDEIN_ResourceName2 &amp;&amp; TARGET.GLIDEIN_ResourceName =!= MY.MachineAttrGLIDEIN_ResourceName3 &amp;&amp; TARGET.GLIDEIN_ResourceName =!= MY.MachineAttrGLIDEIN_ResourceName4</profile>
         <profile namespace="condor" key="+ProjectName" >"BioAlgorithms"</profile>
-        <profile namespace="condor" key="+SingularityImage" >"/cvmfs/singularity.opensciencegrid.org/npavlovikj/bacpopgen:latest"</profile>
+        <profile namespace="condor" key="+SingularityImage" >"/cvmfs/singularity.opensciencegrid.org/npavlovikj/prokevo:latest"</profile>
 
         <!-- tell pegasus that condor_pool is accessible on submit host -->
         <profile namespace="pegasus" key="auxillary.local">true</profile>
