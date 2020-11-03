@@ -25,7 +25,7 @@ ProkEvo is under ongoing development and testing. If you have any questions or i
 ## Running ProkEvo
 ProkEvo takes advantage of the [Pegasus Workflow Management System (WMS)](https://pegasus.isi.edu) to ensure reproducibility, scalability, modularity, fault-tolerance, and robust file management throughout the process. Pegasus WMS uses [HTCondor](http://research.cs.wisc.edu/htcondor) to submit workflows to various computational platforms, such as University or publicly available clusters, clouds, or distributed grids.
 
-In order to use ProkEvo, the computational platform needs to have HTCondor and Pegasus WMS. While these can be found on the majority computational platforms, instructions for installation can be found [here]([https://research.cs.wisc.edu/htcondor/instructions/el/7/stable/](https://research.cs.wisc.edu/htcondor/instructions/el/7/stable/)) and [here]([https://pegasus.isi.edu/downloads/](https://pegasus.isi.edu/downloads/)).
+In order to use ProkEvo, the computational platform needs to have HTCondor and Pegasus WMS. While these can be found on the majority computational platforms, instructions for installation can be found [here](https://research.cs.wisc.edu/htcondor/instructions/el/7/stable/) and [here](https://pegasus.isi.edu/downloads/).
 
 There are few files in ProkEvo that need the absolute path to the working directory:
 - Please replace `ProkEvo_dir` with the absolute path to the current directory in the file `rc.txt`
