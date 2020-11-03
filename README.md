@@ -1,4 +1,5 @@
 # ProkEvo: an automated, reproducible, and scalable framework for high-throughput bacterial population genomics analyses
+Pavlovikj, N., Gomes-Neto, J. C., Deogun, J. S., & Benson, A. K. (2020). ProkEvo: an automated, reproducible, and scalable framework for high-throughput bacterial population genomics analyses. bioRxiv.
 
 ## Overall ProkEvo's computational workflow
 <img width="777" alt="Figure 1" src="https://github.com/npavlovikj/ProkEvo/blob/master/figures/Figure1.png">
