@@ -1,7 +1,7 @@
 # ProkEvo: an automated, reproducible, and scalable framework for high-throughput bacterial population genomics analyses
 
 ## Overall ProkEvo's computational workflow
-![](https://github.com/npavlovikj/ProkEvo/blob/master/figures/Figure1.png =150x150)
+<img width="777" alt="Figure 1" src="https://github.com/npavlovikj/ProkEvo/blob/master/figures/Figure1.png">
 
 ProkEvo is: 
 1) An automated, user-friendly, reproducible, and open-source platform for bacterial population genomics analyses that uses the Pegasus Workflow Management System; 
@@ -34,6 +34,7 @@ There are few files in ProkEvo that need the absolute path to the working direct
 - To submit the pipeline, please run **./submit.sh** after these changes.
 
 Due to differences in the computational platforms, ProkEvo has a different version for OSG. The code for this version can be found in the sub-directory `OSG`. The same modifications as the ones mentioned above hold for this version as well.
+
 
 ## Some notes:
 - All jobs and dependencies are defined in the files `root-dax.py` and `sub-dax.py`. 
