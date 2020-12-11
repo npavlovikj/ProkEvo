@@ -19,7 +19,7 @@ The specific case studies used reproducible Python and R scripts documented in J
 The scalability and portability of ProkEvo was measured with two datasets comprising significantly different numbers of input genomes (one with ~2,400 genomes, and the second with ~23,000 genomes) on two different computational platforms, the [University of Nebraska high-performance computing cluster (Crane)](https://hcc.unl.edu) and the [Open Science Grid (OSG), a distributed, high-throughput cluster](https://opensciencegrid.org). Depending on the dataset and the computational platform used, the running time of ProkEvo varied from ~3-26 days.
 
 ## NOTE:
-ProkEvo is under ongoing development and testing. If you have any questions or issues with ProkEvo and the provided instructions, please let us know. Thank you for checking out ProkEvo!
+ProkEvo is under ongoing development and testing. If you have any questions or issues with ProkEvo and the provided instructions, please let us know. We have limited personnel and resources, and we will try out best to answer any questions when we can. Thank you for your patience and thank you for checking out ProkEvo!
 
 
 ## Running ProkEvo
