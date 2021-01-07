@@ -31,17 +31,17 @@ rm -rf sites.xml
 rm -rf rc.txt
 cp rc.txt.org rc.txt
 
-export RUN_DIR=$TOPDIR/data_tmp
-mkdir -p $RUN_DIR
-./root-dax.py $RUN_DIR > root-pipeline.dax
-
 # Set working path to current directory
-sed -i "s|ProkEvo_dir|$PWD|g" tc.txt 
+sed -i "s|ProkEvo_dir|$PWD|g" tc.txt
 sed -i "s|ProkEvo_dir|$PWD|g" rc.txt
 for i in scripts/*.sh
 do
 sed -i "s|ProkEvo_dir|$PWD|g" $i
 done
+
+export RUN_DIR=$TOPDIR/data_tmp
+mkdir -p $RUN_DIR
+./root-dax.py $RUN_DIR > root-pipeline.dax
 
 # create the site catalog
 # this section contains the information about the running site
