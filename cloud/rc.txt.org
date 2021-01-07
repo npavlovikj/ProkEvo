@@ -1,0 +1,3 @@
+# Replace /home/centos/ProkEvo with the absolute path to the current directory
+sra_ids.txt file:////home/centos/ProkEvo/sra_ids.txt site="local"
+prokevo.yml file:////home/centos/ProkEvo/prokevo.yml site="local"

@@ -1,0 +1,117 @@
+#!/bin/bash
+
+# Replace /home/centos/ProkEvo with the absolute path to the current directory
+
+tr ex_conda_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/create_conda_env.sh"
+    }
+}
+
+tr ex_sra_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/download_sra.sh"
+    }
+}
+
+tr ex_trim_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/trim.sh"
+    }
+}
+
+tr ex_fastqc_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/fastqc.sh"
+    }
+}
+
+tr ex_fastqc_fail_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/fastqc_fail.sh"
+    }
+}
+
+tr ex_spades_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/spades.sh"
+    }
+}
+
+tr ex_quast_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/quast.sh"
+    }
+}
+
+tr ex_filtering_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/filtering.sh"
+    }
+}
+
+tr ex_sistr_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/sistr.sh"
+    }
+}
+
+tr ex_merge_sistr {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/merge_sistr.sh"
+    }
+}
+
+tr ex_mlst_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/mlst.sh"
+    }
+}
+
+tr ex_plasmidfinder_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/plasmidfinder.sh"
+    }
+}
+
+tr ex_abricate_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/abricate.sh"
+    }
+}
+
+tr ex_prokka_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/prokka.sh"
+    }
+}
+
+tr ex_roary_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/roary.sh"
+    }
+}
+
+tr ex_fastbaps_run {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/fastbaps.sh"
+    }
+}
+
+tr ex_cat {
+    site local-hcc {
+        pfn "/bin/cat"
+    }
+}
+
+tr ex_ls {
+    site local-hcc {
+        pfn "file:////home/centos/ProkEvo/scripts/ls.sh"
+    }
+}
+
+tr ex_generate {
+    site local {
+        pfn "file:////home/centos/ProkEvo/sub-dax.py"
+    }
+}

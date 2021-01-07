@@ -1,0 +1,27 @@
+# This tells Pegasus where to find the Site Catalog
+pegasus.catalog.site = XML
+pegasus.catalog.site.file = sites.xml
+
+pegasus.dir.useTimestamp = true
+pegasus.dir.storage.deep = false
+pegasus.condor.logs.symlink = false
+# pegasus.dir.storage.mapper = Flat
+
+pegasus.transfer.links=True
+
+pegasus.catalog.transformation=Text
+pegasus.catalog.transformation.file=tc.txt
+
+pegasus.catalog.replica=File
+pegasus.catalog.replica.file=rc.txt
+
+# OSG
+# pegasus.data.configuration = nonsharedfs
+
+# HCC and Cloud VM
+pegasus.data.configuration = sharedfs
+
+dagman.retry = 3
+
+# set limit for SRA download at the time
+dagman.sradownload.maxjobs = 50
