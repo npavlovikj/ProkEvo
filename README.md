@@ -22,19 +22,40 @@ The scalability and portability of ProkEvo was measured with two datasets compri
 ProkEvo is under ongoing development and testing. If you have any questions or issues with ProkEvo and the provided instructions, please let us know. We have limited personnel and resources, and we will try out best to answer any questions when we can. Thank you for your patience and thank you for checking out ProkEvo!
 
 
-## Running ProkEvo
+## Quick start
 ProkEvo takes advantage of the [Pegasus Workflow Management System (WMS)](https://pegasus.isi.edu) to ensure reproducibility, scalability, modularity, fault-tolerance, and robust file management throughout the process. Pegasus WMS uses [HTCondor](http://research.cs.wisc.edu/htcondor) to submit workflows to various computational platforms, such as University or publicly available clusters, clouds, or distributed grids.
 
-In order to use ProkEvo, the computational platform needs to have HTCondor and Pegasus WMS. While these can be found on the majority computational platforms, instructions for installation can be found [here](https://research.cs.wisc.edu/htcondor/instructions/el/7/stable/) and [here](https://pegasus.isi.edu/downloads/).
+In order to use ProkEvo, the computational platform needs to have HTCondor, Pegasus WMS and Miniconda. While these can be found on the majority computational platforms, instructions for installation can be found [here](https://research.cs.wisc.edu/htcondor/instructions/el/7/stable/), [here](https://pegasus.isi.edu/downloads/) and [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/rpm-debian.html) respectively.
 
-There are few files in ProkEvo that need the absolute path to the working directory:
-- Please replace `ProkEvo_dir` with the absolute path to the current directory in the file `rc.txt`
-- Please replace `ProkEvo_dir` with the absolute path to the current directory in the file `tc.txt`
-- To change the path where the conda environment is created, please specify that in `./scripts/create_conda_env.sh`
-- Add the SRA ids you need in file named `sra_ids.txt`, one SRA id per line.
-- To submit the pipeline, please run **./submit.sh** after these changes.
+```
+[npavlovikj@login.crane ~]$ git clone https://github.com/npavlovikj/ProkEvo.git
+[npavlovikj@login.crane ~]$ cd ProkEvo/
+```
 
-Due to differences in the computational platforms, ProkEvo has a different version for OSG. The code for this version can be found in the sub-directory `OSG`. The same modifications as the ones mentioned above hold for this version as well.
+To download raw Illumina paired-end reads from NCBI, as an input, ProkEvo requires only a list of SRA ids stored in the file `sra_ids.txt`. In this repo, as an example we provide file `sra_ids.txt` with few Salmonella enterica subsp. enterica serovar Enteritidis genomes:
+```
+[npavlovikj@login.crane ProkEvo]$ cat sra_ids.txt 
+SRR5160663
+SRR8385633
+SRR9984383
+```
+
+Once the input files are specified, the next step is to submit ProkEvo using the provided `submit.sh` script:
+```
+[npavlovikj@login.crane ProkEvo]$ ./submit.sh 
+```
+And that's it! The submit script sets the current directory as a working directory where all temporary and final outputs are stored. Running `./submit.sh` prints lots of useful information on the command line, including how to check the status of the workflow and remove it if necessary.
+
+Due to differences in the computational platforms, ProkEvo has a different version for OSG and Virtual Cloud Machine. The code for these versions can be found in the sub-directories `OSG` and `cloud` respectively. 
+
+## Installation
+The aforementioned instructions allow researchers to give ProkEvo an immediate go. For more detailed instructions on how to use ProkEvo:
+- [with downloading raw Illumina reads from NCBI](https://github.com/npavlovikj/ProkEvo/wiki/3.1.-Setup-on-high-performance-computing-cluster#1-downloading-raw-illumina-reads-from-ncbi)
+- [with locally downloaded fastq files](https://github.com/npavlovikj/ProkEvo/wiki/3.1.-Setup-on-high-performance-computing-cluster#2-using-already-downloaded-raw-reads)
+- [on high-performance computing cluster](https://github.com/npavlovikj/ProkEvo/wiki/3.1.-Setup-on-high-performance-computing-cluster)
+- [on virtual cloud machine](https://github.com/npavlovikj/ProkEvo/wiki/3.2.-Setup-on-virtual-cloud-machine)
+
+please check our [Wiki pages](https://github.com/npavlovikj/ProkEvo/wiki).
 
 
 ## Some notes:
