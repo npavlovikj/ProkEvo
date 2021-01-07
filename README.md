@@ -52,6 +52,8 @@ Due to differences in the computational platforms, ProkEvo has a different versi
 The aforementioned instructions allow researchers to give ProkEvo an immediate go. For more detailed instructions on how to use ProkEvo:
 - [with downloading raw Illumina reads from NCBI](https://github.com/npavlovikj/ProkEvo/wiki/3.1.-Setup-on-high-performance-computing-cluster#1-downloading-raw-illumina-reads-from-ncbi)
 - [with locally downloaded fastq files](https://github.com/npavlovikj/ProkEvo/wiki/3.1.-Setup-on-high-performance-computing-cluster#2-using-already-downloaded-raw-reads)
+- [to monitor the workflow](https://github.com/npavlovikj/ProkEvo/wiki/3.1.-Setup-on-high-performance-computing-cluster#monitoring-prokevo)
+- [to check the produced output files](https://github.com/npavlovikj/ProkEvo/wiki/3.1.-Setup-on-high-performance-computing-cluster#output)
 - [on high-performance computing cluster](https://github.com/npavlovikj/ProkEvo/wiki/3.1.-Setup-on-high-performance-computing-cluster)
 - [on virtual cloud machine](https://github.com/npavlovikj/ProkEvo/wiki/3.2.-Setup-on-virtual-cloud-machine)
 
