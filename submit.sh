@@ -8,9 +8,9 @@ TOPDIR=`pwd`
 
 <<DO_NOT_COMMENT_OUT
 You can use raw Illumina sequences stored locally instead of downloading them from NCBI.
-To do this, you will need to add information about the input files in `rc.txt`.
+To do this, you will need to add information about the input files in rc.txt.
 You can add these files in a loop as shown below, or any way you prefer.
-You should also comment out the dependency in `root-dax.py` to skip the download.
+You should also comment out the dependency in root-dax.py to skip the download.
 DO_NOT_COMMENT_OUT
 
 <<COMM
@@ -30,6 +30,14 @@ rm -rf root-pipeline.dax
 rm -rf sites.xml 
 rm -rf rc.txt
 cp rc.txt.org rc.txt
+
+# Set working path to current directory
+sed -i "s|ProkEvo_dir|$PWD|g" tc.txt 
+sed -i "s|ProkEvo_dir|$PWD|g" rc.txt
+for i in scripts/*.sh
+do
+sed -i "s|ProkEvo_dir|$PWD|g" $i
+done
 
 export RUN_DIR=$TOPDIR/data_tmp
 mkdir -p $RUN_DIR

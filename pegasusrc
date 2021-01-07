@@ -18,7 +18,7 @@ pegasus.catalog.replica.file=rc.txt
 # OSG
 # pegasus.data.configuration = nonsharedfs
 
-# HCC
+# HCC and Cloud VM
 pegasus.data.configuration = sharedfs
 
 dagman.retry = 3
