@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Load HCC modules
+# . /util/opt/lmod/lmod/init/profile
+# export -f module
+# module use /util/opt/hcc-modules/Common/
+# module load anaconda
+conda activate ProkEvo_dir/prokevo
+
 set -o pipefail
 
 check_files(){
@@ -22,9 +29,6 @@ check_files(){
     echo "NNNNN" >> $output/contigs.fasta
   fi
 }
-
-module load anaconda
-conda activate prokevo
 
 rm -rf $3
 mkdir -p $3

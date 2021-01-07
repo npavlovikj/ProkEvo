@@ -1,7 +1,11 @@
 #!/bin/bash
 
-module load anaconda
-conda activate prokevo
+# Load HCC modules
+# . /util/opt/lmod/lmod/init/profile
+# export -f module
+# module use /util/opt/hcc-modules/Common/
+# module load anaconda
+conda activate ProkEvo_dir/prokevo
 
 rm -rf $1
 mkdir -p $1

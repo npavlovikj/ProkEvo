@@ -2,8 +2,12 @@
 
 set -e
 
-module load anaconda
-conda activate prokevo
+# Load HCC modules
+# . /util/opt/lmod/lmod/init/profile
+# export -f module
+# module use /util/opt/hcc-modules/Common/
+# module load anaconda
+conda activate ProkEvo_dir/prokevo
 
 # trimmomatic "$@"
 trimmomatic PE -threads 1 $1 $2 $3 $4 $5 $6 \
