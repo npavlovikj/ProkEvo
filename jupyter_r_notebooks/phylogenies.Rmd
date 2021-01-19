@@ -1,5 +1,5 @@
 ---
-title: "phylogeny S aureus and C jejuni"
+title: "Phylogeny S aureus and C jejuni"
 author: "Joao Carlos Gomes-Neto"
 date: "8/15/2020"
 output: html_document
@@ -39,7 +39,7 @@ Plot A. C. jejuni plot (phylogeny, ST, and BAPS1)
 
 ```{r, include = FALSE}
 
-# Enter the phylogeny for Typhimurium group1
+# Enter the phylogeny 
 
 tree_group_1 <- read.tree("jejuni_phylogeny_gr1.tree")
 
@@ -90,7 +90,7 @@ skim(s1)
 
 # Merge BAPS, MLST and SISTR results 
 
-## Merge baps and mslt first
+## Merge baps and mlst first
 
 d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
 
@@ -143,11 +143,11 @@ t1 <- ggtree(tree_group_1, layout = "circular") + xlim(-50, NA)
 
 
 fig7a <- gheatmap(t1, d2, offset=.0, width=10, colnames = FALSE) +
-  scale_fill_manual(values = c("gray", "darkblue",
-                               "cornflowerblue", "coral", "darkgreen", "red",
-                                 "darkseagreen3", "darkcyan", "darksalmon",
-                               "brown", "black", "darkblue", "purple", 
-                               "orange", "red", "gray"),
+  scale_fill_manual(values = c("darkblue", "darkgreen",
+                               "cyan", "bisque2", "gray", "coral1",
+                                 "orange", "bisque2", "orange",
+                               "darksalmon", "chartreuse", "cyan", "darkred", 
+                               "darkgreen", "brown1", "darkblue"),
                     breaks = c("13", "14", "16", "19", "22", "24", "Other sub-groups",
                                "ST8", "ST45", "ST48", "ST50", "ST353", "ST459", 
                                "ST806", "ST982", "Other STs"),
@@ -159,7 +159,617 @@ fig7a <- gheatmap(t1, d2, offset=.0, width=10, colnames = FALSE) +
 fig7a
 ```
 
-Plot B. S. aureus plot (phylogeny, ST, and BAPS1)
+Plot B. Select genomes to create phylogeny with all data using Phandango
+
+```{r, include = FALSE}
+# enter phylogeny data
+
+tree_group_1 <- read.tree("jejuni_phylogeny_gr1.tree")
+
+# tip label as data frame 
+
+treegenomes <- tree_group_1$tip.label
+
+######################################################################
+# Enter Baps 1-6 for group1
+
+baps_group_1 <- read_csv('output.roary_output_95_95_1.fastbaps_level_6.csv')
+
+# Changing column names 
+
+colnames(baps_group_1)[1:2] <- c("id", "baps_1") 
+
+# Select colunms id and baps_1
+b1 <- baps_group_1 %>% 
+              select(id, baps_1)
+
+# QC the data
+
+skim(b1)
+
+
+###########################################
+
+# Enter MLST results
+
+mlst <- read_csv('mlst_output.csv')
+
+# QC the data
+
+skim(mlst)
+
+# Generate the id column 
+
+mlst$id <- sapply(strsplit(as.character(mlst$FILE),'_'), "[", 1)
+
+# Select columns of interest
+
+s1 <- mlst %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+# QC the data
+
+skim(s1)
+
+#####################################################################
+
+# Merge BAPS, MLST and SISTR results 
+
+## Merge baps and mlst first
+
+d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
+
+# st
+
+d1$st <- ifelse(d1$ST == 353, "ST353", 
+                ifelse(d1$ST == 45, "ST45",
+                ifelse(d1$ST == 982, "ST982",
+                ifelse(d1$ST == 48, "ST48",
+                ifelse(d1$ST == 50, "ST50",
+                ifelse(d1$ST == 8, "ST8",
+                ifelse(d1$ST == 806, "ST806",
+                ifelse(d1$ST == 459, "ST459",
+                       "Other STs"))))))))
+                       
+# baps
+
+d1$baps1 <- ifelse(d1$baps_1 == 13, "13", 
+                   ifelse(d1$baps_1 == 14, "14", 
+                          ifelse(d1$baps_1 == 16, "16", 
+                                 ifelse(d1$baps_1 == 19, "19", 
+                                        ifelse(d1$baps_1 == 22, "22", 
+                                               ifelse(d1$baps_1 == 24, "24", 
+                       "Other sub-groups"))))))
+
+# Replace NA in the ST column
+
+d1 <- d1 %>% mutate(st = replace_na(st, "Other STs"))
+d1 <- d1 %>% mutate(baps1 = replace_na(baps1, "Other sub-groups"))
+
+#####################################################################
+
+table(d1$st)
+table(d1$baps1)
+
+########################################################################
+
+# select columns of interest
+
+data2 <- d1 %>% select(id, baps1, st)
+
+# check for missing values
+
+sum(is.na(data2))
+
+# select columns that are in the tree
+
+data3 <- data2 %>% filter(id %in% treegenomes)
+
+# id to index
+
+data3 <- column_to_rownames(data3, var = "id") 
+########################################################################
+
+campypop <- data3
+
+# rename columns
+
+campypop <- rename(campypop, BAPS1 = baps1)
+campypop <- rename(campypop, ST = st)
+
+# export training data 
+write.csv(campypop, "campypop.csv")
+
+```
+
+Plot C. C. jejuni plot (phylogeny, ST, and BAPS1)
+180 genomes
+
+```{r, include = FALSE}
+
+# Enter the phylogeny 
+
+tree_group_1 <- read.tree("jejuni_180.tree")
+
+#############################################
+
+# Enter Baps 1-6 for group1
+
+baps_group_1 <- read_csv('jejuni_180_fastbaps.csv')
+
+# Changing column names 
+
+colnames(baps_group_1)[1:2] <- c("id", "baps_1") 
+
+# Select colunms id and baps_1
+b1 <- baps_group_1 %>% 
+              select(id, baps_1)
+
+# QC the data
+
+skim(b1)
+
+###########################################
+
+# Enter MLST results
+
+mlst <- read_csv('mlst_output.csv')
+
+# QC the data
+
+skim(mlst)
+
+# Generate the id column 
+
+mlst$id <- sapply(strsplit(as.character(mlst$FILE),'_'), "[", 1)
+
+# Select columns of interest
+
+s1 <- mlst %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+# QC the data
+
+skim(s1)
+
+#####################################################################
+
+# Merge BAPS, MLST and SISTR results 
+
+## Merge baps and mlst first
+
+d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
+
+# st
+
+d1$st <- ifelse(d1$ST == 353, "ST353", 
+                ifelse(d1$ST == 45, "ST45",
+                ifelse(d1$ST == 982, "ST982",
+                ifelse(d1$ST == 48, "ST48",
+                ifelse(d1$ST == 50, "ST50",
+                ifelse(d1$ST == 8, "ST8",
+                ifelse(d1$ST == 806, "ST806",
+                ifelse(d1$ST == 459, "ST459",
+                       "Other STs"))))))))
+                       
+# Replace NA in the ST column
+
+d1 <- d1 %>% mutate(st = replace_na(st, "Other STs"))
+
+table(d1$st)
+table(d1$baps_1)
+
+########################################################################
+
+# Plot the phylogeny
+
+# Select the columns needed from d2
+
+d2 <- d1 %>% 
+                    select("id", "baps_1", "st") %>%
+  mutate(baps_1 = as.factor(baps_1))
+
+# Make id the rowname or index
+
+d2 <- column_to_rownames(d2, var = "id") 
+
+# export training data 
+popstr180camp <- d2
+popstr180camp <- rename(popstr180camp, BAPS1 = baps_1)
+popstr180camp <- rename(popstr180camp, ST = st)
+write.csv(popstr180camp, "popstr180camp.csv")
+
+# Create the tree
+
+t1 <- ggtree(tree_group_1, layout = "circular") + xlim(-50, NA)
+
+
+fig7c <- gheatmap(t1, d2, offset=.0, width=10, colnames = FALSE) +
+  scale_fill_manual(values = c("darkblue", "darkgreen",
+                               "cyan", "bisque2", "gray", "coral1",
+                                 "darkolivegreen", "purple", "orange", "black", "deeppink",
+                               "darksalmon", "chartreuse", "cyan", "darkred", 
+                               "darkgreen", "brown1", "darkblue", "purple"),
+                    breaks = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                               "ST8", "ST45", "ST48", "ST50", "ST353", "ST459", 
+                               "ST806", "ST982", "Other STs"),
+                    name= "BAPS1 (innermost) -> ST (outermost)") +
+  ggtitle("C. Sample size (n = 180 genomes --> 20 per ST)") +
+  theme(plot.title = element_text(size = 50, face = "bold"), 
+        legend.title=element_text(size=35, face = "bold"), 
+    legend.text=element_text(size=30))
+fig7c
+```
+
+Plot D. C. jejuni plot (phylogeny, ST, and BAPS1)
+360 genomes
+
+```{r, include = FALSE}
+
+# Enter the phylogeny 
+
+tree_group_1 <- read.tree("jejuni_360.tree")
+
+#############################################
+
+# Enter Baps 1-6 for group1
+
+baps_group_1 <- read_csv('jejuni_360_fastbaps.csv')
+
+# Changing column names 
+
+colnames(baps_group_1)[1:2] <- c("id", "baps_1") 
+
+# Select colunms id and baps_1
+b1 <- baps_group_1 %>% 
+              select(id, baps_1)
+
+# QC the data
+
+skim(b1)
+
+###########################################
+
+# Enter MLST results
+
+mlst <- read_csv('mlst_output.csv')
+
+# QC the data
+
+skim(mlst)
+
+# Generate the id column 
+
+mlst$id <- sapply(strsplit(as.character(mlst$FILE),'_'), "[", 1)
+
+# Select columns of interest
+
+s1 <- mlst %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+# QC the data
+
+skim(s1)
+
+#####################################################################
+
+# Merge BAPS, MLST and SISTR results 
+
+## Merge baps and mlst first
+
+d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
+
+# st
+
+d1$st <- ifelse(d1$ST == 353, "ST353", 
+                ifelse(d1$ST == 45, "ST45",
+                ifelse(d1$ST == 982, "ST982",
+                ifelse(d1$ST == 48, "ST48",
+                ifelse(d1$ST == 50, "ST50",
+                ifelse(d1$ST == 8, "ST8",
+                ifelse(d1$ST == 806, "ST806",
+                ifelse(d1$ST == 459, "ST459",
+                       "Other STs"))))))))
+
+# Replace NA in the ST column
+
+d1 <- d1 %>% mutate(st = replace_na(st, "Other STs"))
+
+table(d1$st)
+table(d1$baps_11)
+
+########################################################################
+
+# Plot the phylogeny
+
+# Select the columns needed from d2
+
+d2 <- d1 %>% 
+                    select("id", "baps_1", "st") %>%
+  mutate(baps_1 = as.factor(baps_1))
+
+# Make id the rowname or index
+
+d2 <- column_to_rownames(d2, var = "id") 
+
+# export training data 
+popstr360camp <- d2
+popstr360camp <- rename(popstr360camp, BAPS1 = baps_1)
+popstr360camp <- rename(popstr360camp, ST = st)
+write.csv(popstr360camp, "popstr360camp.csv")
+
+# Create the tree
+
+t1 <- ggtree(tree_group_1, layout = "circular") + xlim(-50, NA)
+
+
+fig7d <- gheatmap(t1, d2, offset=.0, width=250, colnames = FALSE) +
+  scale_fill_manual(values = c("darkblue", "darkgreen",
+                               "cyan", "bisque2", "gray", "coral1",
+                                 "orange", "purple", "orange",
+                               "darksalmon", "chartreuse", "cyan", "darkred", 
+                               "darkgreen", "brown1", "darkblue", "purple"),
+                    breaks = c("1", "2", "3", "4", "5", "6", "7", "8",
+                               "ST8", "ST45", "ST48", "ST50", "ST353", "ST459", 
+                               "ST806", "ST982", "Other STs"),
+                    name= "BAPS1 (innermost) -> ST (outermost)") +
+  ggtitle("D. Sample size (n = 360 genomes --> 40 per ST)") +
+  theme(plot.title = element_text(size = 50, face = "bold"), 
+        legend.title=element_text(size=35, face = "bold"), 
+    legend.text=element_text(size=30))
+fig7d
+```
+
+Plot E. C. jejuni plot (phylogeny, ST, and BAPS1)
+540 genomes
+
+```{r, include = FALSE}
+
+# Enter the phylogeny 
+
+tree_group_1 <- read.tree("jejuni_540.tree")
+
+#############################################
+
+# Enter Baps 1-6 for group1
+
+baps_group_1 <- read_csv('jejuni_540_fastbaps.csv')
+
+# Changing column names 
+
+colnames(baps_group_1)[1:2] <- c("id", "baps_1") 
+
+# Select colunms id and baps_1
+b1 <- baps_group_1 %>% 
+              select(id, baps_1)
+
+# QC the data
+
+skim(b1)
+
+###########################################
+
+# Enter MLST results
+
+mlst <- read_csv('mlst_output.csv')
+
+# QC the data
+
+skim(mlst)
+
+# Generate the id column 
+
+mlst$id <- sapply(strsplit(as.character(mlst$FILE),'_'), "[", 1)
+
+# Select columns of interest
+
+s1 <- mlst %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+# QC the data
+
+skim(s1)
+
+#####################################################################
+
+# Merge BAPS, MLST and SISTR results 
+
+## Merge baps and mlst first
+
+d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
+
+# st
+
+d1$st <- ifelse(d1$ST == 353, "ST353", 
+                ifelse(d1$ST == 45, "ST45",
+                ifelse(d1$ST == 982, "ST982",
+                ifelse(d1$ST == 48, "ST48",
+                ifelse(d1$ST == 50, "ST50",
+                ifelse(d1$ST == 8, "ST8",
+                ifelse(d1$ST == 806, "ST806",
+                ifelse(d1$ST == 459, "ST459",
+                       "Other STs"))))))))
+
+# Replace NA in the ST column
+
+d1 <- d1 %>% mutate(st = replace_na(st, "Other STs"))
+
+table(d1$st)
+table(d1$baps_1)
+
+########################################################################
+
+# Plot the phylogeny
+
+# Select the columns needed from d2
+
+d2 <- d1 %>% 
+                    select("id", "baps_1", "st") %>%
+  mutate(baps_1 = as.factor(baps_1))
+
+# Make id the rowname or index
+
+d2 <- column_to_rownames(d2, var = "id") 
+
+# export training data 
+popstr540camp <- d2
+popstr540camp <- rename(popstr540camp, BAPS1  = baps_1)
+popstr540camp <- rename(popstr540camp, ST = st)
+write.csv(popstr540camp, "popstr540camp.csv")
+
+# Create the tree
+
+t1 <- ggtree(tree_group_1, layout = "circular") + xlim(-50, NA)
+
+
+fig7e <- gheatmap(t1, d2, offset=.0, width=10, colnames = FALSE) +
+  scale_fill_manual(values = c("darkblue", "darkgreen",
+                               "cyan", "bisque2", "gray", "coral1",
+                                 "orange", "purple", "darkseagreen1", "brown", "cornflowerblue",
+                               "darksalmon", "chartreuse", "cyan", "darkred", 
+                               "darkgreen", "brown1", "darkblue", "purple", "gray"),
+                    breaks = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+                               "ST8", "ST45", "ST48", "ST50", "ST353", "ST459", 
+                               "ST806", "ST982", "Other STs"),
+                    name= "BAPS1 (innermost) -> ST (outermost)") +
+  ggtitle("E. Sample size (n = 540 genomes --> 60 per ST)") +
+  theme(plot.title = element_text(size = 50, face = "bold"), 
+        legend.title=element_text(size=35, face = "bold"), 
+    legend.text=element_text(size=30))
+fig7e
+```
+
+Plot F. C. jejuni plot (phylogeny, ST, and BAPS1)
+720 genomes
+
+```{r, include = FALSE}
+
+# Enter the phylogeny 
+
+tree_group_1 <- read.tree("jejuni_720.tree")
+
+#############################################
+
+# Enter Baps 1-6 for group1
+
+baps_group_1 <- read_csv('jejuni_720_fastbaps.csv')
+
+# Changing column names 
+
+colnames(baps_group_1)[1:2] <- c("id", "baps_1") 
+
+# Select colunms id and baps_1
+b1 <- baps_group_1 %>% 
+              select(id, baps_1)
+
+# QC the data
+
+skim(b1)
+
+###########################################
+
+# Enter MLST results
+
+mlst <- read_csv('mlst_output.csv')
+
+# QC the data
+
+skim(mlst)
+
+# Generate the id column 
+
+mlst$id <- sapply(strsplit(as.character(mlst$FILE),'_'), "[", 1)
+
+# Select columns of interest
+
+s1 <- mlst %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+# QC the data
+
+skim(s1)
+
+#####################################################################
+
+# Merge BAPS, MLST and SISTR results 
+
+## Merge baps and mlst first
+
+d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
+
+# st
+
+d1$st <- ifelse(d1$ST == 353, "ST353", 
+                ifelse(d1$ST == 45, "ST45",
+                ifelse(d1$ST == 982, "ST982",
+                ifelse(d1$ST == 48, "ST48",
+                ifelse(d1$ST == 50, "ST50",
+                ifelse(d1$ST == 8, "ST8",
+                ifelse(d1$ST == 806, "ST806",
+                ifelse(d1$ST == 459, "ST459",
+                       "Other STs"))))))))
+
+# Replace NA in the ST column
+
+d1 <- d1 %>% mutate(st = replace_na(st, "Other STs"))
+
+table(d1$st)
+table(d1$baps_1)
+
+########################################################################
+
+# Plot the phylogeny
+
+# Select the columns needed from d2
+
+d2 <- d1 %>% 
+                    select("id", "baps_1", "st") %>%
+  mutate(baps_1 = as.factor(baps_1))
+
+# Make id the rowname or index
+
+d2 <- column_to_rownames(d2, var = "id") 
+
+# export training data 
+popstr720camp <- d2
+popstr720camp <- rename(popstr720camp, BAPS1 = baps_1)
+popstr720camp <- rename(popstr720camp, ST = st)
+write.csv(popstr720camp, "popstr720camp.csv")
+
+# Create the tree
+
+t1 <- ggtree(tree_group_1, layout = "circular") + xlim(-50, NA)
+
+
+fig7f <- gheatmap(t1, d2, offset=.0, width=10, colnames = FALSE) +
+  scale_fill_manual(values = c("darkblue", "darkgreen",
+                               "cyan", "bisque2", "gray", "coral1",
+                                 "orange", "purple", "darkseagreen1", "brown", "cornflowerblue", "cornsilk4", "deeppink3",
+                               "darksalmon", "chartreuse", "cyan", "darkred", 
+                               "darkgreen", "brown1", "darkblue", "purple", "gray"),
+                    breaks = c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13",
+                               "ST8", "ST45", "ST48", "ST50", "ST353", "ST459", 
+                               "ST806", "ST982", "Other STs"),
+                    name= "BAPS1 (innermost) -> ST (outermost)") +
+  ggtitle("F. Sample size (n = 720 genomes --> 80 per ST)") +
+  theme(plot.title = element_text(size = 50, face = "bold"), 
+        legend.title=element_text(size=35, face = "bold"), 
+    legend.text=element_text(size=30))
+fig7f
+```
+
+#####################################################################################
+Plot A. S. aureus plot (phylogeny, ST, and BAPS1)
 
 ```{r, include = FALSE}
 
@@ -215,7 +825,7 @@ skim(s1)
 
 # Merge BAPS, MLST and SISTR results 
 
-## Merge baps and mslt first
+## Merge baps and mlst first
 
 d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
 
@@ -255,7 +865,7 @@ d2 <- column_to_rownames(d2, var = "id")
 t1 <- ggtree(tree_group_1, layout = "circular") + xlim(-50, NA)
 
 
-fig7b <- gheatmap(t1, d2, offset=.0, width=150, colnames = FALSE) +
+fig8a <- gheatmap(t1, d2, offset=.0, width=150, colnames = FALSE) +
   scale_fill_manual(values = c("gray", "darkblue",
                                "cornflowerblue", "coral", "darkgreen", "red",
                                  "darkseagreen3", "darkcyan", "gray",
@@ -265,9 +875,622 @@ fig7b <- gheatmap(t1, d2, offset=.0, width=150, colnames = FALSE) +
                                "ST5", "ST8", "ST45", "ST105", "ST398", "ST609", 
                                "Other STs"),
                     name= "BAPS1 (innermost) -> ST (outermost)") +
-  ggtitle(expression(bold(paste("B. Hierarchical population structure - ", bolditalic(S),". ", bolditalic(aureus))))) +
+  ggtitle(expression(bold(paste("A. Hierarchical population structure - ", bolditalic(S),". ", bolditalic(aureus))))) +
   theme(plot.title = element_text(size = 40, face = "bold"), 
         legend.title=element_text(size=24, face = "bold"), 
     legend.text=element_text(size=22))
-fig7b
+fig8a
+```
+
+Plot B. S. aureus plot (phylogeny, ST, and BAPS1)
+
+```{r, include = FALSE}
+
+# Enter the phylogeny for Typhimurium group1
+
+tree_group_1 <- read.tree("saureus_phylogeny_gr1.tree")
+
+# tip label as data frame 
+
+treegenomes <- tree_group_1$tip.label
+
+#############################################
+
+# Enter Baps 1-6 for group1
+
+baps_group_1 <- read_csv('output.roary_output_1.fastbaps_level_6.csv')
+
+# Changing column names 
+
+colnames(baps_group_1)[1:2] <- c("id", "baps_1") 
+
+# Select colunms id and baps_1
+b1 <- baps_group_1 %>% 
+              select(id, baps_1)
+
+# QC the data
+
+skim(b1)
+
+###########################################
+
+# Enter MLST results
+
+mlst <- read_csv('saureus_st.csv')
+
+# QC the data
+
+skim(mlst)
+
+# Generate the id column 
+
+mlst$id2 <- sapply(strsplit(as.character(mlst$FILE),'/'), "[", 8)
+mlst <- mlst %>% separate(id2, c("id", "day"), sep = "\\.")
+
+# Select columns of interest
+
+s1 <- mlst %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+# QC the data
+
+skim(s1)
+
+#####################################################################
+
+# Merge BAPS, MLST and SISTR results 
+
+## Merge baps and mlst first
+
+d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
+
+# st
+
+d1$st <- ifelse(d1$ST == 8, "ST8", 
+                ifelse(d1$ST == 5, "ST5",
+                ifelse(d1$ST == 105, "ST105",
+                ifelse(d1$ST == 398, "ST398",
+                ifelse(d1$ST == 609, "ST609",
+                ifelse(d1$ST == 45, "ST45",
+                       "Other STs"))))))
+                       
+# Replace NA in the ST column
+
+d1 <- d1 %>% mutate(st = replace_na(st, "Other STs"))
+
+table(d1$st)
+table(d1$baps_1)
+
+########################################################################
+
+# Select the columns needed from d2
+
+d2 <- d1 %>% 
+                    select("id", "baps_1", "st") %>%
+                    mutate(baps_1 = as.factor(baps_1))
+
+# select columns that are in the tree
+
+data3 <- d2 %>% filter(id %in% treegenomes)
+
+# id to index
+
+data3 <- column_to_rownames(data3, var = "id") 
+########################################################################
+
+saureuspop <- data3
+
+# rename columns
+
+saureuspop <- rename(saureuspop, BAPS1 = baps_1)
+saureuspop <- rename(saureuspop, ST = st)
+
+# export training data 
+write.csv(saureuspop, "saureuspop.csv")
+```
+
+Plot C. S. aureus plot (phylogeny, ST, and BAPS1)
+140 genomes
+
+```{r, include = FALSE}
+
+# Enter the phylogeny 
+
+tree_group_1 <- read.tree("saureus_140.tree")
+
+# tip label as data frame 
+
+treegenomes <- tree_group_1$tip.label
+
+#############################################
+
+# Enter Baps 1-6 for group1
+
+baps_group_1 <- read_csv('saureus_140_fastbaps.csv')
+
+# Changing column names 
+
+colnames(baps_group_1)[1:2] <- c("id", "baps_1") 
+
+# Select colunms id and baps_1
+b1 <- baps_group_1 %>% 
+              select(id, baps_1)
+
+# QC the data
+
+skim(b1)
+
+###########################################
+
+# Enter MLST results
+
+mlst <- read_csv('saureus_st.csv')
+
+# QC the data
+
+skim(mlst)
+
+# Generate the id column 
+
+mlst$id2 <- sapply(strsplit(as.character(mlst$FILE),'/'), "[", 8)
+mlst <- mlst %>% separate(id2, c("id", "day"), sep = "\\.")
+
+# Select columns of interest
+
+s1 <- mlst %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+# QC the data
+
+skim(s1)
+
+#####################################################################
+
+# Merge BAPS, MLST and SISTR results 
+
+## Merge baps and mlst first
+
+d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
+
+# st
+
+d1$st <- ifelse(d1$ST == 8, "ST8", 
+                ifelse(d1$ST == 5, "ST5",
+                ifelse(d1$ST == 105, "ST105",
+                ifelse(d1$ST == 398, "ST398",
+                ifelse(d1$ST == 609, "ST609",
+                ifelse(d1$ST == 45, "ST45",
+                       "Other STs"))))))
+                       
+# Replace NA in the ST column
+
+d1 <- d1 %>% mutate(st = replace_na(st, "Other STs"))
+
+table(d1$st)
+table(d1$baps_1)
+
+########################################################################
+
+# Plot the phylogeny
+
+# Select the columns needed from d2
+
+d2 <- d1 %>% 
+                    select("id", "baps_1", "st") 
+
+# filter rows that are included in the tree
+
+data3 <- d2 %>% filter(id %in% treegenomes)
+
+# Make id the rowname or index
+
+data3 <- column_to_rownames(data3, var = "id") 
+
+# export training data 
+popstr140sa <- data3
+popstr140sa <- rename(popstr140sa, BAPS1 = baps_1)
+popstr140sa <- rename(popstr140sa, ST = st)
+write.csv(popstr140sa, "popstr140sa.csv")
+
+# Create the tree
+
+t1 <- ggtree(tree_group_1, layout = "circular") + xlim(-10, NA)
+
+
+fig8c <- gheatmap(t1, data3, offset=.0, width=250, colnames = FALSE) +
+scale_fill_manual(values = c("gray", "darkblue",
+                               "cornflowerblue", "coral", "darkgreen", "red",
+                                 "darkseagreen3", "darkcyan", "gray",
+                               "brown", "black", "darkblue", "purple"),
+                    breaks = c("1", "2", "3", "4", "5", "6",
+                               "ST5", "ST8", "ST45", "ST105", "ST398", "ST609", 
+                               "Other STs"),
+                    name= "BAPS1 (innermost) -> ST (outermost)") +
+  ggtitle("C. Sample size (n = 137 genomes --> ~ 20 per ST)") +
+  theme(plot.title = element_text(size = 50, face = "bold"), 
+        legend.title=element_text(size=35, face = "bold"), 
+    legend.text=element_text(size=30))
+fig8c
+```
+
+Plot D. S. aureus plot (phylogeny, ST, and BAPS1)
+350 genomes
+
+```{r, include = FALSE}
+
+# Enter the phylogeny 
+
+tree_group_1 <- read.tree("saureus_350.tree")
+
+# tip label as data frame 
+
+treegenomes <- tree_group_1$tip.label
+
+#############################################
+
+# Enter Baps 1-6 for group1
+
+baps_group_1 <- read_csv('saureus_350_fastbaps.csv')
+
+# Changing column names 
+
+colnames(baps_group_1)[1:2] <- c("id", "baps_1") 
+
+# Select colunms id and baps_1
+b1 <- baps_group_1 %>% 
+              select(id, baps_1)
+
+# QC the data
+
+skim(b1)
+
+###########################################
+
+# Enter MLST results
+
+mlst <- read_csv('saureus_st.csv')
+
+# QC the data
+
+skim(mlst)
+
+# Generate the id column 
+
+mlst$id2 <- sapply(strsplit(as.character(mlst$FILE),'/'), "[", 8)
+mlst <- mlst %>% separate(id2, c("id", "day"), sep = "\\.")
+
+# Select columns of interest
+
+s1 <- mlst %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+# QC the data
+
+skim(s1)
+
+#####################################################################
+
+# Merge BAPS, MLST and SISTR results 
+
+## Merge baps and mlst first
+
+d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
+
+# st
+
+d1$st <- ifelse(d1$ST == 8, "ST8", 
+                ifelse(d1$ST == 5, "ST5",
+                ifelse(d1$ST == 105, "ST105",
+                ifelse(d1$ST == 398, "ST398",
+                ifelse(d1$ST == 609, "ST609",
+                ifelse(d1$ST == 45, "ST45",
+                       "Other STs"))))))
+                       
+# Replace NA in the ST column
+
+d1 <- d1 %>% mutate(st = replace_na(st, "Other STs"))
+
+table(d1$st)
+table(d1$baps_1)
+
+########################################################################
+
+# Plot the phylogeny
+
+# Select the columns needed from d2
+
+d2 <- d1 %>% 
+                    select("id", "baps_1", "st") 
+
+# filter rows that are included in the tree
+
+data3 <- d2 %>% filter(id %in% treegenomes)
+
+# Make id the rowname or index
+
+data3 <- column_to_rownames(data3, var = "id") 
+
+# export training data 
+popstr350sa <- data3
+popstr350sa <- rename(popstr350sa, BAPS1 = baps_1)
+popstr350sa <- rename(popstr350sa, ST = st)
+write.csv(popstr350sa, "popstr350sa.csv")
+
+# Create the tree
+
+t1 <- ggtree(tree_group_1, layout = "circular") + xlim(-50, NA)
+
+
+fig8d <- gheatmap(t1, data3, offset=.0, width=10, colnames = FALSE) +
+scale_fill_manual(values = c("gray", "darkblue",
+                               "cornflowerblue", "coral", "darkgreen", "red",
+                                 "darkseagreen3", "darkcyan", "gray",
+                               "brown", "black", "darkblue", "purple"),
+                    breaks = c("1", "2", "3", "4", "5", "6",
+                               "ST5", "ST8", "ST45", "ST105", "ST398", "ST609", 
+                               "Other STs"),
+                    name= "BAPS1 (innermost) -> ST (outermost)") +
+  ggtitle("D. Sample size (n = 349 genomes --> ~ 50 per ST)") +
+  theme(plot.title = element_text(size = 50, face = "bold"), 
+        legend.title=element_text(size=35, face = "bold"), 
+    legend.text=element_text(size=30))
+fig8d
+```
+
+Plot E. S. aureus plot (phylogeny, ST, and BAPS1)
+560 genomes
+
+```{r, include = FALSE}
+
+# Enter the phylogeny 
+
+tree_group_1 <- read.tree("saureus_560.tree")
+
+# tip label as data frame 
+
+treegenomes <- tree_group_1$tip.label
+
+#############################################
+
+# Enter Baps 1-6 for group1
+
+baps_group_1 <- read_csv('saureus_560_fastbaps.csv')
+
+# Changing column names 
+
+colnames(baps_group_1)[1:2] <- c("id", "baps_1") 
+
+# Select colunms id and baps_1
+b1 <- baps_group_1 %>% 
+              select(id, baps_1)
+
+# QC the data
+
+skim(b1)
+
+###########################################
+
+# Enter MLST results
+
+mlst <- read_csv('saureus_st.csv')
+
+# QC the data
+
+skim(mlst)
+
+# Generate the id column 
+
+mlst$id2 <- sapply(strsplit(as.character(mlst$FILE),'/'), "[", 8)
+mlst <- mlst %>% separate(id2, c("id", "day"), sep = "\\.")
+
+# Select columns of interest
+
+s1 <- mlst %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+# QC the data
+
+skim(s1)
+
+#####################################################################
+
+# Merge BAPS, MLST and SISTR results 
+
+## Merge baps and mlst first
+
+d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
+
+# st
+
+d1$st <- ifelse(d1$ST == 8, "ST8", 
+                ifelse(d1$ST == 5, "ST5",
+                ifelse(d1$ST == 105, "ST105",
+                ifelse(d1$ST == 398, "ST398",
+                ifelse(d1$ST == 609, "ST609",
+                ifelse(d1$ST == 45, "ST45",
+                       "Other STs"))))))
+                       
+# Replace NA in the ST column
+
+d1 <- d1 %>% mutate(st = replace_na(st, "Other STs"))
+
+table(d1$st)
+table(d1$baps_1)
+
+########################################################################
+
+# Plot the phylogeny
+
+# Select the columns needed from d2
+
+d2 <- d1 %>% 
+                    select("id", "baps_1", "st") 
+
+# filter rows that are included in the tree
+
+data3 <- d2 %>% filter(id %in% treegenomes)
+
+# Make id the rowname or index
+
+data3 <- column_to_rownames(data3, var = "id") 
+
+# export training data 
+popstr560sa <- data3
+popstr560sa <- rename(popstr560sa, BAPS1 = baps_1)
+popstr560sa <- rename(popstr560sa, ST = st)
+write.csv(popstr560sa, "popstr560sa.csv")
+
+# Create the tree
+
+t1 <- ggtree(tree_group_1, layout = "circular") + xlim(-50, NA)
+
+
+fig8e <- gheatmap(t1, data3, offset=.0, width=250, colnames = FALSE) +
+scale_fill_manual(values = c("gray", "darkblue",
+                               "cornflowerblue", "coral", "darkgreen", "red",
+                                 "darkseagreen3", "darkcyan", "gray",
+                               "brown", "black", "darkblue", "purple", "orange"),
+                    breaks = c("1", "2", "3", "4", "5", "6", "7",
+                               "ST5", "ST8", "ST45", "ST105", "ST398", "ST609", 
+                               "Other STs"),
+                    name= "BAPS1 (innermost) -> ST (outermost)") +
+  ggtitle("E. Sample size (n = 558 genomes --> ~ 80 per ST)") +
+  theme(plot.title = element_text(size = 50, face = "bold"), 
+        legend.title=element_text(size=35, face = "bold"), 
+    legend.text=element_text(size=30))
+fig8e
+```
+
+Plot F. S. aureus plot (phylogeny, ST, and BAPS1)
+770 genomes
+
+```{r, include = FALSE}
+
+# Enter the phylogeny 
+
+tree_group_1 <- read.tree("saureus_770.tree")
+
+# tip label as data frame 
+
+treegenomes <- tree_group_1$tip.label
+
+#############################################
+
+# Enter Baps 1-6 for group1
+
+baps_group_1 <- read_csv('saureus_770_fastbaps.csv')
+
+# Changing column names 
+
+colnames(baps_group_1)[1:2] <- c("id", "baps_1") 
+
+# Select colunms id and baps_1
+b1 <- baps_group_1 %>% 
+              select(id, baps_1)
+
+# QC the data
+
+skim(b1)
+
+###########################################
+
+# Enter MLST results
+
+mlst <- read_csv('saureus_st.csv')
+
+# QC the data
+
+skim(mlst)
+
+# Generate the id column 
+
+mlst$id2 <- sapply(strsplit(as.character(mlst$FILE),'/'), "[", 8)
+mlst <- mlst %>% separate(id2, c("id", "day"), sep = "\\.")
+
+# Select columns of interest
+
+s1 <- mlst %>%
+          select(id, ST) %>%
+            mutate_all(na_if, "-") %>%
+              mutate_all(na_if, "?")
+
+# QC the data
+
+skim(s1)
+
+#####################################################################
+
+# Merge BAPS, MLST and SISTR results 
+
+## Merge baps and mlst first
+
+d1 <- left_join(b1, s1, on = "id") # merge mlst and baps
+
+# st
+
+d1$st <- ifelse(d1$ST == 8, "ST8", 
+                ifelse(d1$ST == 5, "ST5",
+                ifelse(d1$ST == 105, "ST105",
+                ifelse(d1$ST == 398, "ST398",
+                ifelse(d1$ST == 609, "ST609",
+                ifelse(d1$ST == 45, "ST45",
+                       "Other STs"))))))
+                       
+# Replace NA in the ST column
+
+d1 <- d1 %>% mutate(st = replace_na(st, "Other STs"))
+
+table(d1$st)
+table(d1$baps_1)
+
+########################################################################
+
+# Plot the phylogeny
+
+# Select the columns needed from d2
+
+d2 <- d1 %>% 
+                    select("id", "baps_1", "st") 
+
+# filter rows that are included in the tree
+
+data3 <- d2 %>% filter(id %in% treegenomes)
+
+# Make id the rowname or index
+
+data3 <- column_to_rownames(data3, var = "id") 
+
+# export training data 
+popstr770sa <- data3
+popstr770sa <- rename(popstr770sa, BAPS1 = baps_1)
+popstr770sa <- rename(popstr770sa, ST = st)
+write.csv(popstr770sa, "popstr770sa.csv")
+
+# Create the tree
+
+t1 <- ggtree(tree_group_1, layout = "circular") + xlim(-50, NA)
+
+
+fig8f <- gheatmap(t1, data3, offset=.0, width=250, colnames = FALSE) +
+scale_fill_manual(values = c("gray", "darkblue",
+                               "cornflowerblue", "coral", "darkgreen", "red",
+                                 "darkseagreen3", "darkcyan", "gray",
+                               "brown", "black", "darkblue", "purple", "orange"),
+                    breaks = c("1", "2", "3", "4", "5", "6", "7",
+                               "ST5", "ST8", "ST45", "ST105", "ST398", "ST609", 
+                               "Other STs"),
+                    name= "BAPS1 (innermost) -> ST (outermost)") +
+  ggtitle("F. Sample size (n = 766 genomes --> ~ 110 per ST)") +
+  theme(plot.title = element_text(size = 50, face = "bold"), 
+        legend.title=element_text(size=35, face = "bold"), 
+    legend.text=element_text(size=30))
+fig8f
 ```
