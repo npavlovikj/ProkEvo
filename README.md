@@ -60,6 +60,7 @@ The aforementioned instructions allow researchers to give ProkEvo an immediate g
 - [to add new bioinformatics tool](https://github.com/npavlovikj/ProkEvo/wiki/4.1.-Add-new-bioinformatics-tool-to-ProkEvo)
 - [to remove existing bioinformatics tool](https://github.com/npavlovikj/ProkEvo/wiki/4.2.-Remove-existing-bioinformatics-tool-from-ProkEvo)
 - [to change running options for existing tool](https://github.com/npavlovikj/ProkEvo/wiki/4.3.-Change-running-options-for-existing-tool-in-ProkEvo)
+
 please check our [Wiki pages](https://github.com/npavlovikj/ProkEvo/wiki).
 
 
