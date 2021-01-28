@@ -25,6 +25,7 @@ COMM
 rm -rf data_tmp
 rm -rf scratch 
 rm -rf outputs
+rm -rf prokevo
 rm -rf $USER
 rm -rf root-pipeline.dax 
 rm -rf sites.xml 
