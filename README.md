@@ -32,7 +32,7 @@ In order to use ProkEvo, the computational platform needs to have HTCondor, Pega
 [npavlovikj@login.crane ~]$ cd ProkEvo/
 ```
 
-To download raw Illumina paired-end reads from NCBI, as an input, ProkEvo requires only a list of SRA ids stored in the file `sra_ids.txt`. In this repo, as an example we provide file `sra_ids.txt` with few Salmonella enterica subsp. enterica serovar Enteritidis genomes:
+To download raw Illumina paired-end reads from NCBI in fastq format, as an input, ProkEvo requires only a list of SRA ids stored in the file `sra_ids.txt`. In this repo, as an example we provide file `sra_ids.txt` with few Salmonella enterica subsp. enterica serovar Enteritidis genomes:
 ```
 [npavlovikj@login.crane ProkEvo]$ cat sra_ids.txt 
 SRR5160663
