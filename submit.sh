@@ -64,7 +64,7 @@ cat > sites.xml <<EOF
 
         <profile namespace="condor" key="grid_resource">batch slurm</profile>
         <profile namespace="pegasus" key="queue">batch</profile>
-        <profile namespace="env" key="PEGASUS_HOME">/usr</profile>
+        <profile namespace="env" key="PEGASUS_HOME">/util/opt/pegasus-wms/5.0/</profile>
         <profile namespace="condor" key="request_memory"> ifthenelse(isundefined(DAGNodeRetry) || DAGNodeRetry == 0, 2000, 120000) </profile>
     </site>
 
@@ -73,7 +73,7 @@ EOF
 
 
 # plan and submit the root workflow
-pegasus-plan --conf pegasusrc --sites local-hcc --output-site local-hcc --dir ${PWD} --dax root-pipeline.dax --submit # --cluster label
+pegasus-plan --conf pegasusrc --sites local-hcc --output-site local-hcc --dir ${PWD} --submit root-pipeline.dax # --cluster label
 
 # to resume/restart fixed workflow
 # pegasus-run <run_directory>

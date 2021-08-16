@@ -13,7 +13,7 @@ import sys
 import os
 
 # Import the Python DAX library
-os.sys.path.insert(0, "/usr/lib64/pegasus/python")
+os.sys.path.insert(0, "/util/opt/pegasus-wms/5.0/lib64/pegasus/externals/python/")
 from Pegasus.DAX3 import *
 
 dax = ADAG("pipeline")
